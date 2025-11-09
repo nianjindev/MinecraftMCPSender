@@ -65,9 +65,12 @@ public class Minecraftmcp implements ModInitializer {
             sendEventToMCP("game_message", gameContent + " from " + sender.getString());
         });
 
-        ServerLifecycleEvents.SERVER_STARTING.register(server -> {
-            long initialTime = server.getOverworld().getTimeOfDay() % 24000;
-            isCurrentlyDay = initialTime >= 0 && initialTime < 13000;
+        ServerLifecycleEvents.SERVER_STARTED.register(server -> {
+            ServerWorld overworld = server.getOverworld();
+            if (overworld != null) {
+                long initialTime = overworld.getTimeOfDay() % 24000;
+                isCurrentlyDay = initialTime >= 0 && initialTime < 13000;
+            }
         });
 
         registerBiomeChangeDetector();
