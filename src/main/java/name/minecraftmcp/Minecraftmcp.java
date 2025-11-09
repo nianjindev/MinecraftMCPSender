@@ -4,12 +4,9 @@ import net.fabricmc.api.ModInitializer;
 
 // Event imports
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
-import net.fabricmc.fabric.api.event.player.UseBlockCallback;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.ActionResult;
-import net.minecraft.entity.LivingEntity;
+import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.network.message.MessageType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +43,16 @@ public class Minecraftmcp implements ModInitializer {
 			sendEventToMCP("block_broken", blockName);
 			return true;
 		});
+
+        ServerMessageEvents.CHAT_MESSAGE.register((message, sender, typeKey) -> {
+            String chatContent = message.getContent().toString();
+            sendEventToMCP("chat_message", chatContent + " from " + sender.getName().getString());
+        });
+
+        ServerMessageEvents.GAME_MESSAGE.register((message, sender, typeKey) -> {
+            String gameContent = message.toString();
+            sendEventToMCP("game_message", gameContent + " from " + sender.getString());
+        });
 
 	}
 

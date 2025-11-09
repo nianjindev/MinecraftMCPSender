@@ -6,7 +6,6 @@
 		"ExampleMixin",
 		"LivingEntityDamageMixin",
 		"BlockPlaceMixin",
-		"PlayerManagerMixin",
 		"PlayerEntityAttackMixin"
 	],
 	"injectors": {
