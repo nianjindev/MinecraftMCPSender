@@ -8,6 +8,16 @@ import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.network.message.MessageType;
 
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.server.network.ServerPlayerEntity;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import net.minecraft.util.math.BlockPos;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +40,8 @@ public class Minecraftmcp implements ModInitializer {
 	private static final HttpClient httpClient = HttpClient.newHttpClient();
 	private static final Gson gson = new Gson();
 	private static final String MCP_SERVER_URL = "http://localhost:8080/mcp";
+
+    private static final Map<UUID, RegistryKey<Biome>> playerBiomeMap = new HashMap<>();
 
 	@Override
 	public void onInitialize() {
@@ -54,7 +66,69 @@ public class Minecraftmcp implements ModInitializer {
             sendEventToMCP("game_message", gameContent + " from " + sender.getString());
         });
 
+        registerBiomeChangeDetector();
 	}
+    private void registerBiomeChangeDetector() {
+    
+    // 2. Register a listener for the END_SERVER_TICK event
+    // This event fires once per server tick
+    ServerTickEvents.END_SERVER_TICK.register(server -> {
+        
+        // 3. Loop through every player on the server
+        for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+            
+            // --- The rest of the logic is the same, just moved inside this loop ---
+            
+            // Get the player's UUID
+            UUID playerUuid = player.getUuid();
+            
+            // Get the player's current position and world
+            BlockPos playerPos = player.getBlockPos();
+            var world = player.getEntityWorld();
+            
+            // Get the RegistryKey of the current biome
+            RegistryKey<Biome> currentBiomeKey = world.getBiome(playerPos).getKey().orElse(null);
+
+            // If we couldn't get a biome key, skip this player and check the next one
+            if (currentBiomeKey == null) {
+                continue; 
+            }
+
+            // 4. Get the player's previous biome from our map
+            RegistryKey<Biome> previousBiomeKey = playerBiomeMap.get(playerUuid);
+
+            if (previousBiomeKey == null) {
+                // This is the first time we're checking this player
+                // Just store their current biome and move to the next player
+                playerBiomeMap.put(playerUuid, currentBiomeKey);
+                continue; 
+            }
+
+            // 5. Compare the current biome to the previous one
+            if (!currentBiomeKey.equals(previousBiomeKey)) {
+                // --- A BIOME CHANGE HAS HAPPENED! ---
+                
+                // The Identifier (e.g., "minecraft:plains")
+                String newBiomeId = currentBiomeKey.getValue().toString(); 
+                String oldBiomeId = previousBiomeKey.getValue().toString();
+
+                LOGGER.info("Player " + player.getName().getString() + " moved from biome " + oldBiomeId + " to " + newBiomeId);
+                
+                // --- Put your custom action here! ---
+                Minecraftmcp.sendEventToMCP("biome_change", newBiomeId);
+                
+                // 6. CRITICAL: Update the map with the new biome
+                playerBiomeMap.put(playerUuid, currentBiomeKey);
+            }
+        }
+    });
+    
+    // 7. (Optional but Recommended) Clean up the map when a player disconnects
+    //    (This part is the same as before and is correct)
+    ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
+        playerBiomeMap.remove(handler.player.getUuid());
+    });
+}
 
 	public static void sendEventToMCP(String event, String source) {
     CompletableFuture.runAsync(() -> {
