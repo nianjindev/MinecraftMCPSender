@@ -19,7 +19,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 
-import net.minecraft.entity.LivingEntity;
+import net.fabricmc.fabric.api.event.player.UseItemCallback;
 // Event imports
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
@@ -27,6 +27,7 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.biome.Biome;
 
@@ -74,6 +75,13 @@ public class Minecraftmcp implements ModInitializer {
                 isCurrentlyDay = initialTime >= 0 && initialTime < 13000;
             }
         });
+
+        // UseItemCallback.EVENT.register((player, world, hand) -> {
+        //     String itemName = player.getStackInHand(hand).getItem().toString();
+        //     LOGGER.info("Player used item: " + itemName);
+        //     sendEventToMCP("item_used", itemName);
+        //     return ActionResult.PASS;
+        // });
 
         registerBiomeChangeDetector();
         registerDayNightDetector();

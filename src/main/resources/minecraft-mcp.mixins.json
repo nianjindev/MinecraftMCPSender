@@ -5,7 +5,9 @@
 	"mixins": [
 		"LivingEntityDamageMixin",
 		"BlockPlaceMixin",
-		"PlayerEntityAttackMixin"
+		"PlayerEntityAttackMixin",
+		"EatDetectMixin",
+		"CraftDetectMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
