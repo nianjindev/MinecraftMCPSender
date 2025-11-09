@@ -3,7 +3,6 @@
 	"package": "name.minecraftmcp.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
-		"ExampleMixin",
 		"LivingEntityDamageMixin",
 		"BlockPlaceMixin",
 		"PlayerEntityAttackMixin"
@@ -13,5 +12,6 @@
 	},
 	"overwrites": {
 		"requireAnnotations": true
-	}
+	},
+	"refMap":"minecraft-mcp.refmap.json"
 }

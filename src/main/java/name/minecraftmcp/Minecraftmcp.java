@@ -18,6 +18,8 @@ import com.google.gson.Gson;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+
+import net.minecraft.entity.LivingEntity;
 // Event imports
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
@@ -76,6 +78,7 @@ public class Minecraftmcp implements ModInitializer {
         registerBiomeChangeDetector();
         registerDayNightDetector();
 	}
+
     private void registerBiomeChangeDetector() {
     
     // 2. Register a listener for the END_SERVER_TICK event
