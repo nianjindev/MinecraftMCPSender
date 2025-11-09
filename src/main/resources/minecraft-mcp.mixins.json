@@ -4,7 +4,10 @@
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
 		"ExampleMixin",
-		"LivingEntityDamageMixin"
+		"LivingEntityDamageMixin",
+		"BlockPlaceMixin",
+		"PlayerManagerMixin",
+		"PlayerEntityAttackMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

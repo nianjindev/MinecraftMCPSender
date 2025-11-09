@@ -47,22 +47,9 @@ public class Minecraftmcp implements ModInitializer {
 			return true;
 		});
 
-		UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
-			String blockName = world.getBlockState(hitResult.getBlockPos()).getBlock().toString();
-			LOGGER.info("Player used block: " + blockName);
-			sendEventToMCP("block_placed", blockName);
-			return ActionResult.PASS;
-		});
-
 	}
 
-	public static void onEntityDamaged(ServerWorld world, LivingEntity entity, DamageSource source, float amount) {
-		if(entity instanceof PlayerEntity) {
-			sendEventToMCP("player_damaged", source.getName());
-		}
-	}
-
-	private static void sendEventToMCP(String event, String source) {
+	public static void sendEventToMCP(String event, String source) {
     CompletableFuture.runAsync(() -> {
         try {
             Map<String, Object> parameters = Map.of(

@@ -18,7 +18,7 @@ public class LivingEntityDamageMixin {
     
         if (self instanceof PlayerEntity player) {
             System.out.println(player.getName() + " took " + amount + " damage from " + source.getName());
-            Minecraftmcp.onEntityDamaged(world, self, source, amount);
+            Minecraftmcp.sendEventToMCP("player_damaged", source.getName());
         }
     }
 }
