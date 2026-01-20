@@ -1,6 +1,8 @@
 # Minecraft MCP
 Connects to `http://localhost:8080` and sends data such as interactions with blocks, entities, chat messages, as well as environmental changes.
 
+Won best use of elevenlabs wow...
+
 ### MCP Server
 Run the MCP server with [MinecraftNarratorMCP](https://github.com/1J6K21/MinecraftNarratorMCP)
 
